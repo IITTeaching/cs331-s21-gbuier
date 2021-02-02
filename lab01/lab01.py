@@ -22,7 +22,18 @@ def captured_output():
 
 # implement this function
 def is_perfect(n):
-    pass
+  nums=[]
+  for x in range(n):
+    if (x>0):
+      if(n%x==0):
+        nums.append(x)
+  sum = 0
+  for l in nums:
+    sum = sum + l
+  if sum == n:
+    return True
+  else:
+    return False
 
 # (3 points)
 def test1():
@@ -40,7 +51,13 @@ def test1():
 
 # implement this function
 def multiples_of_3_and_5(n):
-    pass
+  sum =0
+  num = 1
+  while (num < n):
+    if(num%3 == 0 or num%5 == 0):
+      sum = sum + num
+    num = num +1
+  return(sum)
 
 # (3 points)
 def test2():
@@ -53,7 +70,24 @@ def test2():
 # EXERCISE 3
 #################################################################################
 def integer_right_triangles(p):
-    pass
+    usednums=[]
+    goodnum = True
+    count = 0
+    b = 2
+    while (b<p/2-1):
+      a = ((p*(p-(2*b)))/((2*p)-(2*b)))
+      c = p-a-b
+      if(a%1==0 and b%1==0 and c%1==0):
+        for x in usednums:
+          if(b==x):
+            goodnum =False
+        if(goodnum==True):
+          usednums.append(a)
+          count = count + 1
+          
+      b = b+1
+    return(count)
+    
 
 def test3():
     tc = unittest.TestCase()
@@ -67,7 +101,39 @@ def test3():
 
 # implement this function
 def gen_pattern(chars):
-    pass
+  high = len(chars)
+  used = []
+  run = 0
+  low = high -1
+  reachMax = False
+  lastString = ""
+  val =0
+  newChars = chars[low:high]
+  string = newChars
+  while (run < len(chars)*2 - 1):
+    if(reachMax == False):
+      joinString = '.'.join(string)
+      center = joinString.center((len(chars)*4)-3,'.')
+      print(center)
+      used.append(center)
+    
+      high = high -1
+      low = low -1
+      newChars = chars[low:high]
+      lastString = string
+      halfString = int(len(string)/2)
+      string =  lastString[:halfString+1] + newChars + lastString[halfString:]
+      if (low <0):
+        reachMax = True
+        val = len(used)-2
+
+    else:
+      print (used[val])
+      val = val -1
+      
+    
+    run = run +1
+
 
 def test4():
     tc = unittest.TestCase()
