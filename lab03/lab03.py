@@ -5,29 +5,31 @@ from typing import TypeVar, Callable, List
 T = TypeVar('T')
 S = TypeVar('S')
 
+
+
 #################################################################################
 # EXERCISE 1
 #################################################################################
 def mysort(lst: List[T], compare: Callable[[T, T], int]) -> List[T]:
-    """
-    This method should sort input list lst of elements of some type T.
+    for x in range (1,len(lst)):
+      pos = x
+      comp = compare(lst[x-1],lst[x])
+      while pos >0 and comp>0:
+        temp = lst[pos]
+        lst[pos] = lst[pos -1]
+        lst[pos-1]=temp
+        pos = pos -1
+        comp = compare(lst[pos-1],lst[pos])
+    return (lst)
 
-    Elements of the list are compared using function compare that takes two
-    elements of type T as input and returns -1 if the left is smaller than the
-    right element, 1 if the left is larger than the right, and 0 if the two
-    elements are equal.
-    """
-    pass
+
 
 def mybinsearch(lst: List[T], elem: S, compare: Callable[[T, S], int]) -> int:
-    """
-    This method search for elem in lst using binary search.
-
-    The elements of lst are compared using function compare. Returns the
-    position of the first (leftmost) match for elem in lst. If elem does not
-    exist in lst, then return -1.
-    """
-    pass
+    for x in range (0,len(lst)):
+      comp = compare(lst[x],elem)
+      if (comp == 0):
+        return x
+    return -1
 
 class Student():
     """Custom class to test generic sorting and searching."""
@@ -102,26 +104,31 @@ def test1_5():
     tc.assertEqual(mybinsearch(sortedstudents, 3.5, stbincmp), 2)
     tc.assertEqual(mybinsearch(sortedstudents, 3.7, stbincmp), -1)
 
-#################################################################################
-# EXERCISE 2
-#################################################################################
+
+
+
 class PrefixSearcher():
 
     def __init__(self, document, k):
-        """
-        Initializes a prefix searcher using a document and a maximum
-        search string length k.
-        """
-        pass
+      pos = 0
+      self.list = []
+      suffixcmp = lambda x,y: 0 if x == y else (-1 if x < y else 1)
+      for x in range(len(document)-k):
+          val = document[pos:pos+k]
+          self.list.append(val)
+          pos = pos +1
+      while (pos < len(document)):
+        self.list.append(document[pos:])
+        pos = pos + 1
+      self.list = mysort(self.list,suffixcmp)
+      
 
-    def search(self, q):
-        """
-        Return true if the document contains search string q (of
+    def search(self, q): 
+        suffixcmp = lambda x,y: 0 if x[0:len(y)] == y else (-1 if x < y else 1)
+        if (mybinsearch(self.list,q,suffixcmp)!= -1):
+          return True
+        return False
 
-        length up to n). If q is longer than n, then raise an
-        Exception.
-        """
-        pass
 
 # 30 Points
 def test2():
@@ -154,29 +161,89 @@ def test2_2():
     tc.assertTrue(p.search("Moby"))
     tc.assertTrue(p.search("Dick"))
 
-#################################################################################
-# EXERCISE 3
-#################################################################################
 class SuffixArray():
 
     def __init__(self, document: str):
-        """
-        Creates a suffix array for document (a string).
-        """
-        pass
+        self.suff = []
+        self.numList = []
+
+        numPos = 0
+        suffixcmp = lambda x,y: 0 if x == y else (-1 if x < y else 1)
+        for x in range (0,len(document)):
+          self.suff.append(document[x:])
+        self.suff = mysort(self.suff,suffixcmp)
+        for t in range (0,len(document)):
+          for y in range (0,len(document)-1):
+            if document[y:]== self.suff[numPos]:
+              self.numList.append(y)
+          numPos = numPos +1
+            
+        
 
 
     def positions(self, searchstr: str):
-        """
-        Returns all the positions of searchstr in the documented indexed by the suffix array.
-        """
-        pass
 
-    def contains(self, searchstr: str):
-        """
-        Returns true of searchstr is coontained in document.
-        """
-        pass
+        poses = []
+        high = len(self.suff)
+        low = 0
+        mid = (high + low)//2
+        while (low<high):  
+          val = self.suff[mid]
+          if val[0:len(searchstr)]<searchstr:
+            low = mid+1
+            
+          elif val[0:len(searchstr)]>searchstr:
+            high = mid-1
+            
+          else:
+            val = self.suff[mid]
+            #print (val[0:10])
+            #print (self.numList[mid])
+            break
+            low = mid +1
+          mid = (high + low)//2
+        val = self.suff[mid]
+        while val[0:len(searchstr)]==searchstr:
+          mid = mid -1
+          #print (val[0:10])
+          val = self.suff[mid]
+        #print (val[0:10])
+        #print (self.numList[mid])
+        mid = mid +1
+        val = self.suff[mid]
+        #print (valf[0:10])
+        #print (self.numList[mid+2])
+        while val[0:len(searchstr)]==searchstr:
+          #print (val[0:10])
+          #print (self.numList[mid])
+          #print(mid)
+          poses.append(mid)
+          return(poses)
+          #mid = mid +1
+          #val = self.suff[mid]
+        #return (poses)
+        
+
+    def contains(self, searchstr: str):  
+        high = len(self.suff)
+        low = 0
+        mid = (high + low)//2
+        while (low<high):  
+          val = self.suff[mid]
+          if val[0:len(searchstr)]<searchstr:
+            low = mid+1
+            
+          elif val[0:len(searchstr)]>searchstr:
+            high = mid-1
+            
+          else:
+            return True
+          mid = (high + low)//2
+        val = self.suff[mid]
+        if (high == low and val[0:len(searchstr)]==searchstr):
+          return True
+        return False
+
 
 # 40 Points
 def test3():
