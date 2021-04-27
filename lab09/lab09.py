@@ -5,7 +5,6 @@ import random
 
 class HBStree:
     """This is an immutable binary search tree with history.
-
     Each insert and delete operation creates a new version of the tree. The data
     structure allows past versions to be accessed.
     """
@@ -53,6 +52,18 @@ class HBStree:
         KeyError, if key does not exist.
         """
         # BEGIN SOLUTION
+        def traverse(node):
+          if node is None:
+            raise KeyError
+          if node.val == key:
+            return key
+          if key < node.val:
+              return  traverse(node.left)
+          if key > node.val:
+              return  traverse(node.right)
+        return traverse(self.root_versions[-1])
+         
+
         # END SOLUTION
 
     def __contains__(self, el):
@@ -60,6 +71,16 @@ class HBStree:
         Return True if el exists in the current version of the tree.
         """
         # BEGIN SOLUTION
+        def traverse(node):
+          if node is None:
+            return False
+          if node.val == el:
+            return True
+          if el < node.val:
+              return  traverse(node.left)
+          if el > node.val:
+              return  traverse(node.right)
+        return traverse(self.root_versions[-1])
         # END SOLUTION
 
     def insert(self,key):
@@ -69,11 +90,51 @@ class HBStree:
         from creating a new version.
         """
         # BEGIN SOLUTION
+        def traverse(node):
+          if node is None:
+            return self.INode(key,None,None)
+          if key < node.val:
+              return self.INode(node.val, traverse(node.left), node.right)
+          if key > node.val:
+              return self.INode(node.val, node.left, traverse(node.right))
+          
+        if key not in self:
+          self.root_versions.append(traverse(self.root_versions[-1]))
+             
+
+
+
+        
+
+          
+
+        
+          
+        
         # END SOLUTION
 
     def delete(self,key):
         """Delete key from the tree, creating a new version of the tree. If key does not exist in the current version of the tree, then do nothing and refrain from creating a new version."""
         # BEGIN SOLUTION
+        def traverse(node, k):
+          if node.val == k:
+            if node.right is None and node.left is None:
+              return None
+            if node.left is None:
+              return node.right
+            if node.right is None:
+              return node.left
+            n = node.left
+            while(n.right is not None):
+              n = n.right
+            nod = self.INode(n.val,traverse(node.left,n.val),node.right)
+            return nod
+          if key < node.val:
+              return self.INode(node.val, traverse(node.left,k), node.right)
+          if key > node.val:
+              return self.INode(node.val, node.left, traverse(node.right,k))
+        if key in self:
+          self.root_versions.append(traverse(self.root_versions[-1],key))
         # END SOLUTION
 
     @staticmethod
@@ -145,6 +206,13 @@ class HBStree:
         if timetravel < 0 or timetravel >= len(self.root_versions):
             raise IndexError(f"valid versions for time travel are 0 to {len(self.root_versions) -1}, but was {timetravel}")
         # BEGIN SOLUTION
+        def traverse(node):
+          if node is not None:
+            yield from traverse(node.left)
+            yield node.val
+            yield from traverse(node.right)
+        loco = len(self.root_versions)-1- timetravel
+        return traverse(self.root_versions[loco])
         # END SOLUTION
 
     @staticmethod
