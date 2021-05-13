@@ -2,22 +2,125 @@ from unittest import TestCase
 import random
 
 def quicksort(lst,pivot_fn):
+    #print('x')
     qsort(lst,0,len(lst) - 1,pivot_fn)
 
 def qsort(lst,low,high,pivot_fn):
     ### BEGIN SOLUTION
+    #print('w')
+    #print(lst)
+    #print(low)
+    #print(high)
+    #print('k')
+    if low < high: 
+      p = pivot_fn(lst,low,high)
+      qsort(lst,low,p-1,pivot_fn)
+      qsort(lst,p+1,high,pivot_fn)
     ### END SOLUTION
 
 def pivot_first(lst,low,high):
     ### BEGIN SOLUTION
+    pivot = lst[low]
+    i = low
+    j = high
+    #print("j")
+    #print(lst[0])
+    #print(low)
+    #print(high)
+    while True:
+      #print(i)
+      #print(j)
+      if i>=j:
+        break
+      while i<len(lst):
+        if lst[i]>=pivot:
+          break
+        i = i +1
+        
+      while j>=0:
+        if lst[j]<=pivot:
+          break
+        j = j-1
+      if i<j:
+        #print ('i')
+        #print(i)
+        #print(j)
+        lst[i],lst[j]=lst[j],lst[i]
+    return j
     ### END SOLUTION
 
 def pivot_random(lst,low,high):
     ### BEGIN SOLUTION
+    n = random.randrange(0,high)
+    pivot = lst[n]
+    i = low
+    j = high
+    #print("j")
+    #print(lst[0])
+    #print(low)
+    #print(high)
+    while True:
+      #print(i)
+      #print(j)
+      if i>=j:
+        break
+      while i<len(lst):
+        if lst[i]>=pivot:
+          break
+        i = i +1
+        
+      while j>=0:
+        if lst[j]<=pivot:
+          break
+        j = j-1
+      if i<j:
+        #print ('i')
+        #print(i)
+        #print(j)
+        lst[i],lst[j]=lst[j],lst[i]
+    return j
     ### END SOLUTION
 
 def pivot_median_of_three(lst,low,high):
     ### BEGIN SOLUTION
+    def med (lst,low,high):
+      lo = lst[low]
+      hi = lst[high]
+      me = lst[(low+high)//2]
+      if lo > me and lo<hi or lo < me and lo>hi:
+        return lo
+      elif me <hi and me>lo or me>hi and me<lo:
+        return me
+      else:
+        return hi
+    #n = random.randrange(0,high)
+    pivot = med(lst,low,high)
+    i = low
+    j = high
+    #print("j")
+    #print(lst[0])
+    #print(low)
+    #print(high)
+    while True:
+      #print(i)
+      #print(j)
+      if i>=j:
+        break
+      while i<len(lst):
+        if lst[i]>=pivot:
+          break
+        i = i +1
+        
+      while j>=0:
+        if lst[j]<=pivot:
+          break
+        j = j-1
+      if i<j:
+        #print ('i')
+        #print(i)
+        #print(j)
+        lst[i],lst[j]=lst[j],lst[i]
+    return j
     ### END SOLUTION
 
 ################################################################################
